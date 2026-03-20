@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auto-Prompt Optimizer Agent | Azure AI Demo</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="login-screen" class="screen active">
+        <div class="login-container">
+            <div class="login-logo">
+                <div class="logo-icon">🔄</div>
+                <h1>Auto-Prompt Optimizer</h1>
+                <p class="subtitle">Self-Optimizing AI Agent on Azure</p>
+            </div>
+            <form id="login-form" class="login-form">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" autocomplete="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" autocomplete="current-password" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-full">Sign In</button>
+                <p id="login-error" class="error-msg hidden"></p>
+            </form>
+            <div class="login-footer">
+                <span>Powered by</span>
+                <img src="https://img.shields.io/badge/Azure_OpenAI-0078D4?style=flat&logo=microsoft-azure&logoColor=white" alt="Azure OpenAI">
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Dashboard -->
+    <div id="dashboard-screen" class="screen hidden">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <span class="logo-icon-sm">🔄</span>
+                <h1>Auto-Prompt Optimizer Agent</h1>
+            </div>
+            <div class="header-right">
+                <span class="azure-badge">⚡ Azure AI</span>
+                <button id="logout-btn" class="btn btn-ghost">Logout</button>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <!-- Document Section -->
+            <section class="section document-section">
+                <h2>📄 Document Input</h2>
+                <div class="document-actions">
+                    <button id="use-sample-btn" class="btn btn-primary">
+                        <span>📋</span> Use Sample Certificate of Insurance
+                    </button>
+                    <span class="divider-text">or</span>
+                    <label class="btn btn-outline upload-label">
+                        <span>📁</span> Upload PDF
+                        <input type="file" id="file-upload" accept=".pdf" hidden>
+                    </label>
+                </div>
+                <div id="document-status" class="status-bar hidden">
+                    <span class="status-icon">✅</span>
+                    <span class="status-text"></span>
+                </div>
+            </section>
+
+            <!-- Start Button -->
+            <section class="section start-section">
+                <button id="start-btn" class="btn btn-start" disabled>
+                    <span class="play-icon">▶</span>
+                    Start Self-Optimization
+                </button>
+                <p class="hint-text">Load a document first, then watch the AI optimize itself in real-time</p>
+            </section>
+
+            <!-- Progress Overview -->
+            <section id="progress-section" class="section hidden">
+                <h2>📊 Optimization Progress</h2>
+                <div class="progress-overview">
+                    <div class="progress-bar-container">
+                        <div id="progress-bar" class="progress-bar" style="width: 0%"></div>
+                    </div>
+                    <div class="progress-stats">
+                        <span id="progress-label">Initializing...</span>
+                        <span id="progress-score" class="score-badge">--/100</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Cycle Cards -->
+            <section id="cycles-section" class="section hidden">
+                <h2>🔄 Optimization Cycles</h2>
+                <div class="cycles-grid">
+                    <div class="cycle-card" id="cycle-0" data-cycle="0">
+                        <div class="cycle-header">
+                            <span class="cycle-label">Cycle 0</span>
+                            <span class="cycle-tag">Baseline</span>
+                            <span class="cycle-score" id="score-0">--</span>
+                        </div>
+                        <div class="score-bar-container">
+                            <div class="score-bar" id="bar-0" style="width: 0%"></div>
+                        </div>
+                        <div class="cycle-details hidden" id="details-0">
+                            <div class="detail-section">
+                                <h4>System Prompt</h4>
+                                <pre class="prompt-text" id="prompt-0"></pre>
+                            </div>
+                            <div class="detail-section">
+                                <h4>Summary Output</h4>
+                                <div class="summary-text" id="summary-0"></div>
+                            </div>
+                            <div class="detail-section">
+                                <h4>Score Breakdown</h4>
+                                <div class="score-breakdown" id="breakdown-0"></div>
+                            </div>
+                        </div>
+                        <button class="btn btn-ghost btn-sm toggle-details" data-cycle="0">View Details ▼</button>
+                    </div>
+
+                    <div class="cycle-card" id="cycle-1" data-cycle="1">
+                        <div class="cycle-header">
+                            <span class="cycle-label">Cycle 1</span>
+                            <span class="cycle-tag">Optimized</span>
+                            <span class="cycle-score" id="score-1">--</span>
+                        </div>
+                        <div class="score-bar-container">
+                            <div class="score-bar" id="bar-1" style="width: 0%"></div>
+                        </div>
+                        <div class="cycle-details hidden" id="details-1">
+                            <div class="detail-section">
+                                <h4>System Prompt</h4>
+                                <pre class="prompt-text" id="prompt-1"></pre>
+                            </div>
+                            <div class="detail-section">
+                                <h4>Summary Output</h4>
+                                <div class="summary-text" id="summary-1"></div>
+                            </div>
+                            <div class="detail-section">
+                                <h4>Score Breakdown</h4>
+                                <div class="score-breakdown" id="breakdown-1"></div>
+                            </div>
+                        </div>
+                        <button class="btn btn-ghost btn-sm toggle-details" data-cycle="1">View Details ▼</button>
+                    </div>
+
+                    <div class="cycle-card" id="cycle-2" data-cycle="2">
+                        <div class="cycle-header">
+                            <span class="cycle-label">Cycle 2</span>
+                            <span class="cycle-tag">Refined</span>
+                            <span class="cycle-score" id="score-2">--</span>
+                        </div>
+                        <div class="score-bar-container">
+                            <div class="score-bar" id="bar-2" style="width: 0%"></div>
+                        </div>
+                        <div class="cycle-details hidden" id="details-2">
+                            <div class="detail-section">
+                                <h4>System Prompt</h4>
+                                <pre class="prompt-text" id="prompt-2"></pre>
+                            </div>
+                            <div class="detail-section">
+                                <h4>Summary Output</h4>
+                                <div class="summary-text" id="summary-2"></div>
+                            </div>
+                            <div class="detail-section">
+                                <h4>Score Breakdown</h4>
+                                <div class="score-breakdown" id="breakdown-2"></div>
+                            </div>
+                        </div>
+                        <button class="btn btn-ghost btn-sm toggle-details" data-cycle="2">View Details ▼</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Prompt Evolution -->
+            <section id="prompt-evolution-section" class="section hidden">
+                <h2>📝 System Prompt Evolution</h2>
+                <div id="prompt-evolution" class="prompt-evolution"></div>
+            </section>
+
+            <!-- Activity Log -->
+            <section id="log-section" class="section hidden">
+                <h2>💬 Live Activity Log</h2>
+                <div id="activity-log" class="activity-log"></div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <span>Powered by Azure OpenAI (GPT-4o) + Azure Document Intelligence</span>
+        </footer>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
